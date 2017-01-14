@@ -1,0 +1,77 @@
+
+Initialize n*64 array fingerprints //n is total number of documents
+for i in range(0, n) do  
+    for each value in HashValues[i] //HashValues[i] is the set of hash values of i th document
+        for j in range(0, 64) //64 is the length of hash value
+            if HashValues[i][j]==1 then
+                fingerprints[i][j]+=Tfidf[i][j]
+            else
+                fingerprints[i][j]-=Tfidf[i][j]
+            end if
+        end for
+    end for
+end for
+
+for i in range(0, n) do
+    for j in range(0,64) do
+        if fingerprints[i][j]>0 then
+            fingerprints[i][j] = 1
+        else
+            fingerprints[i][j] = 0
+        end if
+    end for        
+end for         
+
+//rotating power
+
+for i in range(0,64) //rotate each fingerprint 64 times
+    sort(fingerprints) 
+    for j in range(0,n-1) //each each adjacent pair of documents
+        if hamming_distance(fingerprint[j], fingerprint[j+1]) > threshold1 then
+            add j & j+1 th document to the list of near duplicates
+        end if
+    end for
+    rotate(fingerprints) //rotate the fingeprints of all the documents by 1 bit
+end for
+
+for each di in <D1, D2, D3...Dn> do
+    term_document_matrix = get_termDocMat(di)
+end for
+U, s, V = get_SVD(term_document_matrix)
+lsi_fingerprints = s*(V.transpose())
+
+
+
+
+
+6. Generate a graph Gt, of textually similar documents using the fingerprints. 
+
+Graph_textual = graph()
+Graph_conceptual = graph()
+Graph_exacts = graph()
+for i in range(0,64) //rotate each fingerprint 64 times
+    sort(fingerprints) 
+    for j in range(0,n-1) //each each adjacent pair of documents
+        if hamm_dist(fingerprint[j], fingerprint[j+1]) > th1 && hamm_dist(fingerprint[j], fingerprint[j+1]) < th2 then
+            if cosine(lsi_fingerprints[jth doc], lsi_fingerprints[j+1 th doc]) > th3 then
+               Graph_conceptual.add(jth doc) 
+               Graph_conceptual.add(j+1 th doc)
+               Graph_conceptual.add_edge(j th doc, j+1 doc)
+            end if
+        else
+            if hamm_dist(fingerprint[j], fingerprint[j+1]) > th2 && hamm_dist(fingerprint[j], fingerprint[j+1]) < th4
+                Graph_textual.add(jth doc) 
+                Graph_textual.add(j+1 th doc)
+                Graph_textual.add_edge(j th doc, j+1 doc)
+            else
+                Graph_exacts.add(jth doc) 
+                Graph_exacts.add(j+1 th doc)
+                Graph_exacts.add_edge(j th doc, j+1 doc)
+            end if
+            
+        end if
+        
+    end for
+    rotate(fingerprints) //rotate the fingeprints of all the documents by 1 bit
+end for
+
